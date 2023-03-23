@@ -199,7 +199,19 @@ BREAK: {chart['notes'][4]}
                 })
             ]))
         except Exception:
-            await query_chart.send("未找到该谱面")
+            try:
+                await query_chart.send(Message([
+                    MessageSegment.reply(event.message_id),
+                    MessageSegment("image", {
+                        "file": f"{file}"
+                    }),
+                    MessageSegment("image", {
+                        "file": f"base64://{str(image_to_base64(text_to_image(f"{music['id']}. {music['title']}\n"+msg)), encoding='utf-8')}"
+                    })
+                ]))
+            except Exception:
+                await query_chart.send("未找到该谱面")
+
     else:
         name = groups[1]
         music = total_list.by_id(name)
