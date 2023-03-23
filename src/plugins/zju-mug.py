@@ -34,12 +34,11 @@ async def _(bot: Bot, event: Event, state: T_State):
         choice_pool.remove(x)
     x = escape(x)
     await random_choice.finish(Message([
-        MessageSegment.reply(event.message_id), {
-            "type": "text",
-            "data": {
-                "text": f"{x}"
-            }
-        }]))
+        MessageSegment.reply(event.message_id),
+        MessageSegment("text", {
+            "text": f"{x}" })
+        ])
+    )
 
 another_choice = on_regex(".*你再想想.*", priority=51)
 
@@ -61,12 +60,10 @@ async def _(bot: Bot, event: Event, state: T_State):
         x = random.choice(choice_pool)
         choice_pool.remove(x)
     await another_choice.finish(Message([
-        MessageSegment.reply(event.message_id), {
-            "type": "text",
-            "data": {
-                "text": f"{x}"
-            }
-        }]))
+        MessageSegment.reply(event.message_id), 
+        MessageSegment("text", {
+            "text": f"{x}"
+        })]))
 
 yesquestion = on_regex("是.*吧", priority=52)
 
@@ -83,12 +80,10 @@ async def _(bot: Bot, event: Event, state: T_State):
     if (msg.find('嘉然') != -1 or msg.find('嘉心糖') != -1):
         x = x+'捏'
     await yesquestion.finish(Message([
-        MessageSegment.reply(event.message_id), {
-            "type": "text",
-            "data": {
-                "text": f"{x}"
-            }
-        }]))
+        MessageSegment.reply(event.message_id), 
+        MessageSegment("text", {
+            "text": f"{x}"
+        })]))
 
 food_list = defaultdict(list)
 f = open('src/static/foodlist.csv', 'r', encoding='utf-8-sig')
@@ -132,12 +127,10 @@ async def _(bot: Bot, event: Event, state: T_State):
             choice_pool.remove(x)
 
     await eatwut.finish(Message([
-        MessageSegment.reply(event.message_id), {
-            "type": "text",
-            "data": {
-                "text": f"{x}"
-            }
-        }]))
+        MessageSegment.reply(event.message_id), 
+        MessageSegment("text", {
+            "text": f"{x}"
+        })]))
 
 
 aliases_map = None
@@ -172,12 +165,10 @@ async def _(bot: Bot, event: Event, state: T_State):
     init_aliases_chart()
     alias_name = query_aliases_name(str(event.get_message())[:-4])
     await random_choice.finish(Message([
-        MessageSegment.reply(event.message_id), {
-            "type": "text",
-            "data": {
-                "text": f"{alias_name}"
-            }
-        }]))
+        MessageSegment.reply(event.message_id), 
+        MessageSegment("text", {
+            "text": f"{alias_name}"
+        })]))
 
 
 repeat = on_message(priority=99)

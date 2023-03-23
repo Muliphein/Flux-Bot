@@ -24,10 +24,13 @@ import requests as req
 import openai
 from PIL import Image
 from io import BytesIO
+import os
 
 # comments to let it go
 # comments to let module works
-openai.api_key = None
+
+openai.api_key = os.getenv("OPENAI_API_KEY")
+print(f"Openai KEY : {openai.api_key}")
 
 require_chat = on_command('c')
 
@@ -52,11 +55,8 @@ async def _(bot: Bot, event: Event, state: T_State):
         context[group_id].append({"role":"assistant", "content":answer})
         answer = re.sub(r"(.{30})", "\\1\n", answer)
         await require_chat.finish(Message([
-            {
-                "type": "image",
-                "data": {
+            MessageSegment("image", {
                     "file": f"base64://{str(image_to_base64(text_to_image(answer)), encoding='utf-8')}"
-                }
-            }
+            }),
         ]))
         

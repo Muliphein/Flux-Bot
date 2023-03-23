@@ -146,8 +146,8 @@ async def _(event: Event, message: Message = EventMessage()):
             search_result += f"{music['id']}. {music['title']}\n"
         await search_music.finish(Message([
             MessageSegment.reply(event.message_id), 
-            MessageSegment("text", {
-                "text": search_result.strip()
+            MessageSegment("image", {
+                "file": f"base64://{str(image_to_base64(text_to_image(search_result)), encoding='utf-8')}"
             })]))
     else:
         await search_music.send(f"结果过多（{len(res)} 条），请缩小查询范围。")
@@ -186,51 +186,36 @@ SLIDE: {chart['notes'][2]}
 TOUCH: {chart['notes'][3]}
 BREAK: {chart['notes'][4]}
 谱师: {chart['charter']}'''
+            msg = f"{music['id']}. {music['title']}\n"+msg
             await query_chart.send(Message([
                 MessageSegment.reply(event.message_id),
-                MessageSegment("text", {
-                    "text": f"{music['id']}. {music['title']}\n"
-                }),
                 MessageSegment("image", {
                     "file": f"{file}"
                 }),
-                MessageSegment("text", {
-                    "text": msg
+                MessageSegment("image", {
+                    "file": f"base64://{str(image_to_base64(text_to_image(msg)), encoding='utf-8')}"
                 })
             ]))
         except Exception:
-            try:
-                await query_chart.send(Message([
-                    MessageSegment.reply(event.message_id),
-                    MessageSegment("image", {
-                        "file": f"{file}"
-                    }),
-                    MessageSegment("image", {
-                        "file": f"base64://{str(image_to_base64(text_to_image(f"{music['id']}. {music['title']}\n"+msg)), encoding='utf-8')}"
-                    })
-                ]))
-            except Exception:
-                await query_chart.send("未找到该谱面")
+            await query_chart.send("未找到该谱面")
 
     else:
         name = groups[1]
         music = total_list.by_id(name)
         try:
             file = f"base64://{get_pic(music.id)}"
+            msg = f"{music['id']}. {music['title']}\n" + f"艺术家: {music['basic_info']['artist']}\n分类: {music['basic_info']['genre']}\nBPM: {music['basic_info']['bpm']}\n版本: {music['basic_info']['from']}\n难度: {'/'.join(music['level'])}"
             await query_chart.send(Message([
                 MessageSegment.reply(event.message_id),
-                MessageSegment("text", {
-                    "text": f"{music['id']}. {music['title']}\n"
-                }),
                 MessageSegment("image", {
                     "file": f"{file}"
                 }),
-                MessageSegment("text", {
-                    "text": f"艺术家: {music['basic_info']['artist']}\n分类: {music['basic_info']['genre']}\nBPM: {music['basic_info']['bpm']}\n版本: {music['basic_info']['from']}\n难度: {'/'.join(music['level'])}"
+                MessageSegment("image", {
+                    "file": f"base64://{str(image_to_base64(text_to_image(msg)), encoding='utf-8')}"
                 })
             ]))
         except Exception:
-            await query_chart.send("未找到该乐曲")
+            await query_chart.send("未找到该谱面")
 
 
 wm_list = ['拼机', '推分', '越级', '下埋', '夜勤', '练底力', '练手法', '打旧框', '干饭', '抓绝赞', '收歌']
@@ -310,12 +295,9 @@ BREAK\t5/12.5/25(外加200落)'''
         information = str(f"{music['title']} {level_labels2[level_index]} 分数线 {line}% \n 允许的最多 TAP GREAT 数量为 {(total_score * reduce / 10000):.2f}(每个-{10000 / total_score:.4f}%),\nBREAK 50落(一共{brk}个)等价于 {(break_50_reduce / 100):.3f} 个 TAP GREAT(-{break_50_reduce / total_score * 100:.4f}%)")
         print(information)
         await query_score.finish(Message([
-            {
-                "type": "image",
-                "data": {
-                    "file": f"base64://{str(image_to_base64(text_to_image(information)), encoding='utf-8')}"
-                }
-            }
+            MessageSegment("image", {
+                "file": f"base64://{str(image_to_base64(information), encoding='utf-8')}"
+            })
         ]))
         # except Exception:
         #     await query_score.send("格式错误，输入“分数线 帮助”以查看帮助信息")
@@ -374,12 +356,9 @@ async def _(event: Event, message: Message = CommandArg()):
         await best_50_pic.send("该用户禁止了其他人获取数据。")
     else:
         await best_50_pic.send(Message([
-            {
-                "type": "image",
-                "data": {
-                    "file": f"base64://{str(image_to_base64(img), encoding='utf-8')}"
-                }
-            }
+            MessageSegment("image", {
+                "file": f"base64://{str(image_to_base64(img), encoding='utf-8')}"
+            })
         ]))
 
 
@@ -399,12 +378,11 @@ async def _(event: Event):
         ret = ret + f"{new_line if flag else ''}{music['id']}. {music['title']}"
         flag = True
     await composer_search_music.finish(Message([
-        MessageSegment.reply(event.message_id), {
-        "type": "image",
-        "data": {
-            "file": f"base64://{str(image_to_base64(text_to_image(ret)), encoding='utf-8')}"
-        }
-    }]))
+        MessageSegment.reply(event.message_id),
+        MessageSegment("image", {
+                "file": f"base64://{str(image_to_base64(ret), encoding='utf-8')}"
+            })
+        ]))
 
 charter_search_music = on_regex(r"^谱师查歌.+")
 
@@ -435,10 +413,7 @@ async def _(event: Event):
     if(len(ret_text)==0):
         await charter_search_music.finish("未找到该谱师")
     await charter_search_music.finish(Message([
-        {
-            "type": "image",
-            "data": {
-                "file": f"base64://{str(image_to_base64(text_to_image(ret_text)), encoding='utf-8')}"
-            }
-        }
+        MessageSegment("image", {
+                "file": f"base64://{str(image_to_base64(ret_text), encoding='utf-8')}"
+            })
     ]))
