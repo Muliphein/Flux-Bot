@@ -1,6 +1,3 @@
-import random
-import re
-
 from typing import Optional, Dict, List
 from collections import defaultdict
 from PIL import Image
@@ -8,22 +5,22 @@ from nonebot import on_command, on_message, on_notice, require, get_driver, on_r
 from nonebot.typing import T_State
 from nonebot.adapters.cqhttp import Message, Event, Bot
 from nonebot.adapters.cqhttp import MessageSegment
-from nonebot.exception import IgnoredException
-from nonebot.message import event_preprocessor
 from src.libraries.image import *
-from random import randint
-import time
-from PIL import Image
-import requests
-from PIL import Image
 from io import BytesIO
-import aiohttp
 from nonebot.adapters.cqhttp import MessageSegment
 
-import requests as req
 from PIL import Image
 from io import BytesIO
 
+import requests
+import pycurl
+from io import BytesIO
+import re
+import xmltodict
+import pycurl
+import certifi
+from io import BytesIO
+import urllib.request
 # comments to let it go
 # comments to let module works
 
@@ -44,13 +41,15 @@ async def setu_generate():
         # print(body)
         xdict = xmltodict.parse(body)
         pic_url = xdict['post']['file-url']
-        # print(pic_url)
-        resp = requests.get(pic_url)
-        image = Image.open(BytesIO(resp.content))
+        print(pic_url)
+        pic_name = 'a.'+pic_url.split('.')[-1]
+        print(pic_name)
+        urllib.request.urlretrieve(pic_url, pic_name)
+        image = Image.open(pic_name)
         Image_copy = Image.Image.copy(image)
         image.close()
         Image_copy = Image_copy.convert("RGBA")
-        return Image
+        return Image_copy
     except:
         return None
 
