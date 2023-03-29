@@ -45,12 +45,9 @@ async def _(bot: Bot, event: Event, state: T_State):
         )
         
     await person_record.finish(Message([
-        {
-            "type": "poke",
-            "data": {
-                "qq": f"{event.sender.user_id}"
-            }
-        }
+        MessageSegment("poke",  {
+           "qq": f"{event.sender_id}"
+        })
     ]))
 
 
@@ -78,13 +75,10 @@ async def _(bot: Bot, event: Event, state: T_State):
         tempString =  "今天还没有人报告过喵"
 
     await person_query.finish(Message([
-        {
-            "type": "text",
-            "data": {
-                "text": tempString
-            }
-        }
-    ]))
+        MessageSegment("text", {
+            "text": f"{tempString}" })
+        ])
+    )
 
 
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
@@ -424,12 +418,9 @@ async def _(bot: Bot, event: Event, state: T_State):
     if result_pic is not None:
 
         await level_table.finish(Message([
-            {
-                "type": "image",
-                "data": {
-                    "file": f"base64://{str(image_to_base64(result_pic), encoding='utf-8')}"
-                }
-            }
+            MessageSegment("image", {
+                "file": f"base64://{str(image_to_base64(result_pic), encoding='utf-8')}"
+            })
         ]))
     else:
         

@@ -42,7 +42,8 @@ async def _(bot: Bot, event: Event, state: T_State):
     if str(group_id).startswith('group_725194874'):
         if group_id not in context:
             context[group_id] = []
-        input = str(event.get_message()).strip()
+        print(str(event.get_message())[1:])
+        input = (str(event.get_message())[1:]).strip()
         # print(f'Input {input}')
         while(len(context[group_id]) > 10):
             context[group_id].pop(0)
