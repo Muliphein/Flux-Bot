@@ -32,28 +32,58 @@ import os
 openai.api_key = os.getenv("OPENAI_API_KEY")
 print(f"Openai KEY : {openai.api_key}")
 
-require_chat = on_command('c')
+require_chat = on_command('c3')
 
-context = {}
+context_3 = {}
 
 @require_chat.handle()
 async def _(bot: Bot, event: Event, state: T_State):
     group_id = event.get_session_id()
     if str(group_id).startswith('group_725194874'):
-        if group_id not in context:
-            context[group_id] = []
-        print(str(event.get_message())[1:])
-        input = (str(event.get_message())[1:]).strip()
+        if group_id not in context_3:
+            context_3[group_id] = []
+        print(str(event.get_message())[2:])
+        input = (str(event.get_message())[2:]).strip()
         # print(f'Input {input}')
-        while(len(context[group_id]) > 10):
-            context[group_id].pop(0)
-        context[group_id].append({"role":"user", "content":input})
+        while(len(context_3[group_id]) > 10):
+            context_3[group_id].pop(0)
+        context_3[group_id].append({"role":"user", "content":input})
         completion = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo", 
-            messages=context[group_id]
+            model="gpt-3.5-turbo-0613", 
+            messages=context_3[group_id]
         )
         answer = str(completion['choices'][0]['message']['content']).strip()
-        context[group_id].append({"role":"assistant", "content":answer})
+        context_3[group_id].append({"role":"assistant", "content":answer})
+        answer = re.sub(r"(.{30})", "\\1\n", answer)
+        await require_chat.finish(Message([
+            MessageSegment("image", {
+                    "file": f"base64://{str(image_to_base64(text_to_image(answer)), encoding='utf-8')}"
+            }),
+        ]))
+        
+        
+require_chat = on_command('c4')
+
+context_4 = {}
+
+@require_chat.handle()
+async def _(bot: Bot, event: Event, state: T_State):
+    group_id = event.get_session_id()
+    if str(group_id).startswith('group_725194874'):
+        if group_id not in context_4:
+            context_4[group_id] = []
+        print(str(event.get_message())[2:])
+        input = (str(event.get_message())[2:]).strip()
+        # print(f'Input {input}')
+        while(len(context_4[group_id]) > 10):
+            context_4[group_id].pop(0)
+        context_4[group_id].append({"role":"user", "content":input})
+        completion = openai.ChatCompletion.create(
+            model="gpt-4", 
+            messages=context_4[group_id]
+        )
+        answer = str(completion['choices'][0]['message']['content']).strip()
+        context_4[group_id].append({"role":"assistant", "content":answer})
         answer = re.sub(r"(.{30})", "\\1\n", answer)
         await require_chat.finish(Message([
             MessageSegment("image", {

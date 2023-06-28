@@ -15,15 +15,19 @@ import os
 
 def get_pic(idNum):
     cover_dir = 'src/static/mai/cover/'
-    pngPath = os.path.join(cover_dir, f'{int(idNum)}.png')
+    pngPath = os.path.join(cover_dir, f'{idNum}.png')
     if not os.path.exists(pngPath):
-        pngPath = os.path.join(cover_dir, f'{int(idNum)}.jpg')
-    if not os.path.exists(pngPath):
-        pngPath = os.path.join(cover_dir, f'{int(idNum)-10000}.jpg')
-    if not os.path.exists(pngPath):
-        pngPath = os.path.join(cover_dir, f'{int(idNum)-10000}.png')
-    if not os.path.exists(pngPath):
-        pngPath = os.path.join(cover_dir, '1000.png')
+        import urllib.request
+        try:
+            id_str = str(idNum)
+            id_str = id_str.rjust(5, "0")
+            print(f'down load from https://www.diving-fish.com/covers/{id_str}.png')
+            urllib.request.urlretrieve(f'https://www.diving-fish.com/covers/{id_str}.png', pngPath)
+            print('Successfully!')
+        except Exception as e:
+            print('Error')
+            pngPath = os.path.join(cover_dir, f'0000.png')
+
     return str(image_to_base64(Image.open(pngPath).convert('RGBA')), encoding='utf-8')
 
 def song_txt(music: Music):
@@ -296,7 +300,7 @@ BREAK\t5/12.5/25(外加200落)'''
         print(information)
         await query_score.finish(Message([
             MessageSegment("image", {
-                "file": f"base64://{str(image_to_base64(information), encoding='utf-8')}"
+                "file": f"base64://{str(image_to_base64(text_to_image(information)), encoding='utf-8')}"
             })
         ]))
         # except Exception:
@@ -349,7 +353,7 @@ async def _(event: Event, message: Message = CommandArg()):
         payload = {'qq': str(event.get_user_id()), 'b50':True}
     else:
         payload = {'username': username, 'b50':  True}
-    img, success = await generate(payload, '2022_09')
+    img, success = await generate(payload, '2023_06')
     if success == 400:
         await best_50_pic.send("未找到此玩家，请确保此玩家的用户名和查分器中的用户名相同。")
     elif success == 403:

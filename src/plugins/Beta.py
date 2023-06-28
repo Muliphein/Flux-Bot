@@ -131,33 +131,18 @@ class DrawQuery(object):
         return img.resize((int(img.size[0] * time), int(img.size[1] * time)))
 
     def _get_cover_image(self, idNum):
-        
         pngPath = os.path.join(self.cover_dir, f'{idNum}.png')
-        # print(pngPath)
         if not os.path.exists(pngPath):
-            pngPath = os.path.join(
-                self.cover_dir, f'{idNum}.jpg')
-        if not os.path.exists(pngPath):
-            pngPath = os.path.join(
-                self.cover_dir, f'{idNum.rjust(4, "0")}.jpg')
-        if not os.path.exists(pngPath):
-            pngPath = os.path.join(
-                self.cover_dir, f'{idNum.rjust(4, "0")}.png')
-        if not os.path.exists(pngPath):
-            pngPath = os.path.join(
-                self.cover_dir, f'{int(idNum)-10000}.jpg')
-        if not os.path.exists(pngPath):
-            pngPath = os.path.join(
-                self.cover_dir, f'{int(idNum)-10000}.png')
-        if not os.path.exists(pngPath):
-            pngPath = os.path.join(
-                self.cover_dir, f'{str(int(idNum)-10000).rjust(4, "0")}.png')
-        if not os.path.exists(pngPath):
-            pngPath = os.path.join(
-                self.cover_dir, f'{str(int(idNum)-10000).rjust(4, "0")}.jpg')
-        if not os.path.exists(pngPath):
-            pngPath = os.path.join(self.cover_dir, '1000.png')
-            
+            import urllib.request
+            try:
+                id_str = str(idNum)
+                id_str = id_str.rjust(5, "0")
+                print(f'down load from https://www.diving-fish.com/covers/{id_str}.png')
+                urllib.request.urlretrieve(f'https://www.diving-fish.com/covers/{id_str}.png', pngPath)
+                print('Successfully!')
+            except Exception as e:
+                print('Error')
+                pngPath = os.path.join(self.cover_dir, f'0000.png')
         temp = Image.open(pngPath).convert('RGB')
         return temp
         pass
@@ -405,7 +390,7 @@ async def level_picture_test(ds1=8.0, ds2=14.6):
 level_table = on_command('level_table ', aliases={'定数表 '})
 @level_table.handle()
 async def _(bot: Bot, event: Event, state: T_State):
-    argv = str(event.get_message()).strip().split(" ")
+    argv = str(event.get_message()).strip().split(" ")[1:]
     if len(argv) > 2 or len(argv) == 0:
         await level_table.finish("命令格式为\n定数表 <定数>\n定数表 <定数下限> <定数上限>")
         return

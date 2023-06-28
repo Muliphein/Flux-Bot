@@ -324,13 +324,17 @@ class DrawBest(object):
             chartInfo = sdBest[num]
             pngPath = os.path.join(self.cover_dir, f'{chartInfo.idNum}.png')
             if not os.path.exists(pngPath):
-                pngPath = os.path.join(self.cover_dir, f'{chartInfo.idNum}.jpg')
-            if not os.path.exists(pngPath):
-                pngPath = os.path.join(self.cover_dir, f'{int(chartInfo.idNum)-10000}.jpg')
-            if not os.path.exists(pngPath):
-                pngPath = os.path.join(self.cover_dir, f'{int(chartInfo.idNum)-10000}.png')
-            if not os.path.exists(pngPath):
-                pngPath = os.path.join(self.cover_dir, '1000.png')
+                import urllib.request
+                try:
+                    id_str = str(chartInfo.idNum)
+                    id_str = id_str.rjust(5, "0")
+                    print(f'down load from https://www.diving-fish.com/covers/{id_str}.png')
+                    urllib.request.urlretrieve(f'https://www.diving-fish.com/covers/{id_str}.png', pngPath)
+                    print('Successfully!')
+                except Exception as e:
+                    print('Error')
+                    pngPath = os.path.join(self.cover_dir, f'0000.png')
+            
             temp = Image.open(pngPath).convert('RGB')
             temp = self._resizePic(temp, itemW / temp.size[0]) 
             temp = temp.crop((0, (temp.size[1] - itemH) / 2, itemW, (temp.size[1] + itemH) / 2))
@@ -429,7 +433,7 @@ class DrawBest(object):
         for num in range(len(sdBest), sdBest.size):
             i = num // 5
             j = num % 5
-            temp = Image.open(os.path.join(self.cover_dir, f'1000.png')).convert('RGB')
+            temp = Image.open(os.path.join(self.cover_dir, f'0000.png')).convert('RGB')
             temp = self._resizePic(temp, itemW / temp.size[0])
             temp = temp.crop((0, (temp.size[1] - itemH) / 2, itemW, (temp.size[1] + itemH) / 2))
             temp = temp.filter(ImageFilter.GaussianBlur(1))
@@ -447,14 +451,16 @@ class DrawBest(object):
             chartInfo = dxBest[num]
             pngPath = os.path.join(self.cover_dir, f'{int(chartInfo.idNum)}.png')
             if not os.path.exists(pngPath):
-                pngPath = os.path.join(self.cover_dir, f'{int(chartInfo.idNum)}.jpg')
-            if not os.path.exists(pngPath):
-                pngPath = os.path.join(self.cover_dir, f'{int(chartInfo.idNum)-10000}.jpg')
-            if not os.path.exists(pngPath):
-                pngPath = os.path.join(self.cover_dir, f'{int(chartInfo.idNum)-10000}.png')
-                # print("ReGet {}".format(pngPath))
-            if not os.path.exists(pngPath):
-                pngPath = os.path.join(self.cover_dir, '1000.png')
+                import urllib.request
+                try:
+                    id_str = str(chartInfo.idNum)
+                    id_str = id_str.rjust(5, "0")
+                    print(f'down load from https://www.diving-fish.com/covers/{id_str}.png')
+                    urllib.request.urlretrieve(f'https://www.diving-fish.com/covers/{id_str}.png', pngPath)
+                    print('Successfully!')
+                except Exception as e:
+                    print('Error')
+                    pngPath = os.path.join(self.cover_dir, f'0000.png')
             temp = Image.open(pngPath).convert('RGB')
             temp = self._resizePic(temp, itemW / temp.size[0])
             temp = temp.crop((0, (temp.size[1] - itemH) / 2, itemW, (temp.size[1] + itemH) / 2))
@@ -558,7 +564,7 @@ class DrawBest(object):
         for num in range(len(dxBest), dxBest.size):
             i = num // 5
             j = num % 5
-            temp = Image.open(os.path.join(self.cover_dir, f'1000.png')).convert('RGB')
+            temp = Image.open(os.path.join(self.cover_dir, f'0000.png')).convert('RGB')
             temp = self._resizePic(temp, itemW / temp.size[0])
             temp = temp.crop((0, (temp.size[1] - itemH) / 2, itemW, (temp.size[1] + itemH) / 2))
             temp = temp.filter(ImageFilter.GaussianBlur(1))
@@ -603,7 +609,9 @@ class DrawBest(object):
                 plateImg = Image.open(os.path.join(self.pic_dir, 'none.png')).convert('RGBA')
             else:
                 plateImg = Image.open(os.path.join(self.pic_dir, f'plate_{self.platenum}.png')).convert('RGBA')
-            plateImg = self._resizePic(plateImg, 2)
+                # plateImg = plateImg.resize()
+            # if plateImg.width < 400:
+            plateImg = self._resizePic(plateImg, 800.0/(plateImg.width*1.0))
             self.img.paste(plateImg, (9, 8), mask=plateImg.split()[3])
             resp = requests.get(f'http://q1.qlogo.cn/g?b=qq&nk={self.qqId}&s=100')
             qqLogo = Image.open(BytesIO(resp.content))
